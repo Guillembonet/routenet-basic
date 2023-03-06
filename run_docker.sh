@@ -1,0 +1,1 @@
+docker run -it --rm -v $(pwd):/home tensorflow/tensorflow:2.6.1 bash
