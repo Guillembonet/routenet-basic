@@ -9,7 +9,7 @@ from models.jitter_model import RouteNet_Fermi as routenet_jitter
 from models.loss_model import RouteNet_Fermi as routenet_loss
 
 if len(sys.argv) != 2:
-    print("provide one argument: delay or jitter")
+    print("provide one argument: delay, jitter or losses")
     sys.exit()
 
 model = routenet_delay()
@@ -53,4 +53,5 @@ print("predicting...")
 ds_test = input_fn([[0,1],[1,0]])
 ds_test = ds_test.prefetch(tf.data.experimental.AUTOTUNE)
 predictions = model.predict(ds_test, verbose=1)
+print("predicted:")
 print(predictions)
