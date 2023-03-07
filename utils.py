@@ -99,7 +99,7 @@ def network_to_hypergraph(G, R, T, P):
             if src != dst:
                 if G.has_edge(src, dst):
                     D_G.add_node('l_{}_{}'.format(src, dst),
-                                 capacity=G.edges[src, dst, 0]['bandwidth'],
+                                 capacity=G.edges[src, dst]['bandwidth'],
                                  policy=np.where(G.nodes[src]['schedulingPolicy'] == POLICIES)[0][0])
                 for f_id in range(len(T[src, dst]['Flows'])):
                     if T[src, dst]['Flows'][f_id]['AvgBw'] != 0 and T[src, dst]['Flows'][f_id]['PktsGen'] != 0:

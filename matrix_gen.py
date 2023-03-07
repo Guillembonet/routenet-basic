@@ -5,6 +5,7 @@ import numpy as np
 from utils import hypergraph_to_input_data, network_to_hypergraph
 from objects import TimeDist, SizeDist
 
+# all with traffic
 def get_traffic_matrix(matrix):
     result_matrix = []
     for row in matrix:
@@ -19,12 +20,13 @@ def get_traffic_matrix(matrix):
                                               'AvgBw': 591.646,
                                               'PktsGen': 0.593295,
                                               'TotalPktsGen': 34247.953875,
-                                              'ToS': 2.0}]})
+                                              'ToS': 1.0}]})
             else:
                 result_row.append({'AggInfo': {'AvgBw': 0.0, 'PktsGen': 0.0, 'TotalPktsGen': 0.0},'Flows': []})
         result_matrix.append(result_row)
     return np.matrix(result_matrix)
 
+# all direct connections
 def get_routing_matrix(matrix):
     result_matrix = []
     i = 0
@@ -39,38 +41,38 @@ def get_routing_matrix(matrix):
             j += 1
         result_matrix.append(result_row)
         i += 1
-    return np.matrix(result_matrix)
+    return np.array(result_matrix, dtype=object)
 
-#its not important
+# its not important
 def get_performance_matrix(matrix):
     result_matrix = []
-    for row in matrix:
+    for i in range(0, len(matrix)):
         result_row = []
-        for element in row:
-            result_row.append({'AggInfo': {'PktsDrop': 0.0, 'AvgDelay': -1.0, 'AvgLnDelay': -1.0, 'p10': -1.0, 'p20': -1.0, 'p50': -1.0, 'p80': -1.0, 'p90': -1.0, 'Jitter': -1.0},
-                                'Flows': [
-                                    {'PktsDrop': 0.0, 'AvgDelay': -1.0, 'AvgLnDelay': -1.0, 'p10': -1.0, 'p20': -1.0, 'p50': -1.0, 'p80': -1.0, 'p90': -1.0, 'Jitter': -1.0}
-                                ]})
+        for j in range(0, len(matrix)):
+            if i == j:
+                result_row.append({'AggInfo': {'PktsDrop': 0.0, 'AvgDelay': -1.0, 'AvgLnDelay': -1.0, 'p10': -1.0, 'p20': -1.0, 'p50': -1.0, 'p80': -1.0, 'p90': -1.0, 'Jitter': -1.0}, 'Flows': [{'PktsDrop': 0.0, 'AvgDelay': -1.0, 'AvgLnDelay': -1.0, 'p10': -1.0, 'p20': -1.0, 'p50': -1.0, 'p80': -1.0, 'p90': -1.0, 'Jitter': -1.0}]})
+            else:
+                result_row.append({'AggInfo': {'PktsDrop': 0.0, 'AvgDelay': 0.103026, 'AvgLnDelay': -2.61639, 'p10': 0.03, 'p20': 0.03, 'p50': 0.118485, 'p80': 0.169999, 'p90': 0.169999, 'Jitter': 0.00552},
+                                    'Flows': [{'PktsDrop': 0.0, 'AvgDelay': 0.103026, 'AvgLnDelay': -2.61639, 'p10': 0.03, 'p20': 0.03, 'p50': 0.118485, 'p80': 0.169999, 'p90': 0.169999, 'Jitter': 0.00552}]})
         result_matrix.append(result_row)
     return np.matrix(result_matrix)
 
+# all direct connections
 def get_graph(matrix):
     g = nx.MultiDiGraph()
     for i in range(0, len(matrix)):
-        g.add_node(i, label=i, queueSizes="32", schedulingPolicy="FIFO", levelsQoS=1)
+        g.add_node(i, queueSizes="32,32", schedulingPolicy="WFQ", levelsQoS=2, schedulingWeights="50,50")
     i = 0
-    n = 0
+    n = [0] * len(matrix)
     for row in matrix:
         j = 0
         for element in row:
             if element:
-                g.add_edge(i, j, weight=1, key=0, port=n, bandwidth=10000)
-                n += 1
-                print(g.edges[i,j,0]['bandwidth'])
+                g.add_edge(i, j, weight=1, key=0, port=n[i], bandwidth=10000)
+                n[i] += 1
             j += 1
         i += 1
-    nx.write_gml(g, "./test")
-    return g
+    return nx.DiGraph(g)
 
 def generator(M):
     G = get_graph(M)
