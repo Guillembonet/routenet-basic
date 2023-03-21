@@ -50,7 +50,26 @@ print("loaded checkpoint")
 
 #Make predictions
 print("predicting...")
-ds_test = input_fn([[0,1],[1,0]])
+ds_test = input_fn(
+    MG=[
+        [0,0,1000000,0],
+        [0,0,1000000,0],
+        [1000000,1000000,0,1000000],
+        [0,0,1000000,0]
+    ],
+    MT=[
+        [0,0,0,800000],
+        [0,0,0,800000],
+        [0,0,0,0],
+        [0,0,0,0]
+    ],
+    MR=[
+        [[0]    ,[0,2,1],[0,2],[0,2,3]],
+        [[1,2,0],[1]    ,[1,2],[1,2,3]],
+        [[2,0]  ,[2,1]  ,[2]  ,[2,3]  ],
+        [[3,2,0],[3,2,1],[3,2],[3]    ],
+    ]
+)
 ds_test = ds_test.prefetch(tf.data.experimental.AUTOTUNE)
 predictions = model.predict(ds_test, verbose=1)
 print("predicted:")

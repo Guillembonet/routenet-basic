@@ -150,7 +150,7 @@ def network_to_hypergraph(G, R, T, P):
                         D_G.add_edge('p_{}_{}_{}'.format(src, dst, f_id), 'l_{}_{}'.format(h_1, h_2))
                         if 'bufferSizes' in G.nodes[h_1]:
                             q_s = str(G.nodes[h_1]['bufferSizes']).split(',')
-                        elif 'queueSizes':
+                        elif 'queueSizes' in G.nodes[h_1]:
                             q_s = [int(q)*(T[src, dst]['Flows'][f_id]['AvgBw']/T[src, dst]['Flows'][f_id]['PktsGen']) for q in str(G.nodes[h_1]['queueSizes']).split(',')]
                         # policy = G.nodes[h_1]['schedulingPolicy']
                         if 'schedulingWeights' in G.nodes[h_1]:
