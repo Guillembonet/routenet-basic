@@ -13,9 +13,11 @@ def get_traffic_matrix(matrix: List[List[float]]):
         result_row = []
         for element in row:
             if element > 0:
-                result_row.append({'AggInfo': {'AvgBw': element, 'PktsGen': element/1400, 'TotalPktsGen': 1000},
-                                   'Flows': [{'TimeDist': TimeDist(2),
-                                              'TimeDistParams': {},
+                result_row.append({'AggInfo': {'AvgBw': element, 'PktsGen': element/1000, 'TotalPktsGen': 1000},
+                                   'Flows': [{'TimeDist': TimeDist(0),
+                                              'TimeDistParams': {'EqLambda': 800, 'AvgPktsLambda': 0.8, 'ExpMaxFactor': 10.0},
+                                              'SizeDist': SizeDist(2),
+                                              'SizeDistParams': {'AvgPktSize': 1000.0, 'PktSize1': 300.0, 'PktSize2': 1700.0},
                                               'AvgBw': element,
                                               'PktsGen': element/1400,
                                               'TotalPktsGen': 1000,
